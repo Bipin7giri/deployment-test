@@ -13,7 +13,9 @@ const deploy = async () => {
 
   // Step 1: Sync files
   try {
-    execSync(`rsync -av --exclude='.git' "${sourceRepo}/" "${targetRepo}/"`);
+    execSync(
+      `rm -rf "${targetRepo}/*" && rsync -av --exclude='.git' "${sourceRepo}/" "${targetRepo}/"`
+    );
     process.chdir(targetRepo);
     console.log(process.cwd());
     console.log("Initializing Git repository in dist folder...");
