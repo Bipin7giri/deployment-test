@@ -1,0 +1,27 @@
+@media (min-width: 640px) {
+  .table-responsive td,
+  .table-responsive th {
+    font-size: 26px;
+  }
+  .ant-pagination-prev,
+  .ant-pagination-next,
+  .ant-pagination-item,
+  .ant-pagination-item-link {
+    font-size: 20px;
+    margin-top: 10px; /* Adjust the font size as per your requirement */
+  }
+}
+
+@media (min-width: 1024px) {
+  .table-responsive td,
+  .table-responsive th {
+    font-size: 14px;
+  }
+  .ant-pagination-prev,
+  .ant-pagination-next,
+  .ant-pagination-item,
+  .ant-pagination-item-link {
+    font-size: 14px;
+    margin-top: 10px; /* Adjust the font size as per your requirement */
+  }
+}

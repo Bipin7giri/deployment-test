@@ -1,0 +1,11 @@
+{
+    "activation": true,
+    "blackListedSector": {
+        "label": "sectorName",
+        "item":["Commercial Banks","Development Banks","Finance","Life Insurance","Non-Life Insurance","Other","Trading"]
+    },
+    "whiteListedSector": {
+        "label": "sectorName",
+        "item":["Hydro Power","Manufacturing & Processing"]
+    }
+}

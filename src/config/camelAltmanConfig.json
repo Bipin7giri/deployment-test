@@ -1,0 +1,16 @@
+{
+    "activation": false,
+    "blacklistedInstrumenType": {
+        "label": "instrumentType",
+        "item": ["Mutual Funds","Non-Convertible Debentures" ]
+    },
+    "blackListedSector": {
+        "label": "sectorName",
+        "item":["Promoters Share"]
+    },
+    "whiteListedSectorForCamel": {
+        "label": "sectorName",
+        "item":["Development Banks","Life Insurance","Commercial Banks","Finance"]
+    }
+}
+

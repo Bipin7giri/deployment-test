@@ -1,0 +1,10 @@
+/* .TVChartContainer {
+	height: calc(100vh - 80px);
+} */
+.h-\[100vh\] {
+    height: 90vh !important;
+}
+div#header-toolbar-compare {
+    color: red;
+    display: none !important;
+  }
