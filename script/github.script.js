@@ -19,11 +19,11 @@ const deploy = async () => {
     console.log("Initializing Git repository in dist folder...");
     // await spawnPromise("git", ["init"]);
 
-    // console.log("Adding all files to Git...");
-    // await spawnPromise("git", ["add", "."]);
+    console.log("Adding all files to Git...");
+    await spawnPromise("git", ["add", "."]);
 
-    // console.log("Committing with initial commit message...");
-    // await spawnPromise("git", ["commit", "-m", "Initial commit"]);
+    console.log("Committing with initial commit message...");
+    await spawnPromise("git", ["commit", "-m", "second  commit"]);
 
     // try {
     //   await spawnPromise("git", ["remote", "get-url", "origin"]);
@@ -38,11 +38,11 @@ const deploy = async () => {
     //   ]);
     // }
 
-    // await spawnPromise("git", ["config", "pull.rebase", "false"]);
+    await spawnPromise("git", ["config", "pull.rebase", "false"]);
 
-    // await spawnPromise("git", ["pull", "origin", "main"]);
+    await spawnPromise("git", ["pull", "origin", "main"]);
 
-    // await spawnPromise("git", ["push", "origin", "main"]);
+    await spawnPromise("git", ["push", "origin", "main"]);
   } catch (error) {
     console.error("Error copying files:", error);
     process.exit(1);
