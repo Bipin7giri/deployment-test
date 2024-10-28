@@ -1,7 +1,5 @@
-import {
-  parseFullSymbol,
-  makeSaralApiRequest,
-} from "./helpers.js";
+/* eslint-disable import/no-anonymous-default-export */
+import { parseFullSymbol, makeSaralApiRequest } from "./helpers.js";
 
 function getType(sector) {
   const result = {
@@ -35,13 +33,36 @@ const configurationData = {
   // The `symbols_types` arguments are used for the `searchSymbols` method if a user selects this symbol type
   symbols_types: [
     // { name: 'Indices', value: 'Indices'},
-    { name: 'Stock', value: 'Stock' },
+    { name: "Stock", value: "Stock" },
   ],
   // Represents the resolutions for bars supported by your datafeed
-  supported_resolutions: ["1", "5", "15", "30", "45", "1H", "2H", "3H", "4H", "1D", "1W", "1M", "3M", "6M", "12M"],
+  supported_resolutions: [
+    "1",
+    "5",
+    "15",
+    "30",
+    "45",
+    "1H",
+    "2H",
+    "3H",
+    "4H",
+    "1D",
+    "1W",
+    "1M",
+    "3M",
+    "6M",
+    "12M",
+  ],
   // supported_resolutions: ['1D'],
 };
-
+let BAR_REPLAY = {
+  ON: false,
+  STATUS: "stop",
+  FINAL: null,
+  FUTURE_DATA: [],
+  SPEED: 1000,
+  INTERVAL: null,
+};
 
 // Obtains all symbols for all exchanges supported by CryptoCompare API
 async function getAllSymbols() {
@@ -225,10 +246,12 @@ export default {
     const symbols = await getAllSymbols();
 
     const newSymbols = symbols.filter((symbol) => {
-      if (symbol?.symbol?.toLowerCase().includes(userInput.toLowerCase()) || symbol?.full_name?.toLowerCase().includes(userInput.toLowerCase())) return symbol;
-    }
-
-    )
+      if (
+        symbol?.symbol?.toLowerCase().includes(userInput.toLowerCase()) ||
+        symbol?.full_name?.toLowerCase().includes(userInput.toLowerCase())
+      )
+        return symbol;
+    });
     // console.log('[searchSymbols]: Method call Afeter', newSymbols);
     // const newSymbols = symbols.filter((sym) => sym)
     onResultReadyCallback(newSymbols);
@@ -254,10 +277,10 @@ export default {
     const symbolInfo = {
       ticker: symbolItem.full_name,
       name: symbolItem.symbol,
-      description: symbolItem.description + ' (www.sarallagani.com)',
+      description: symbolItem.description + " (www.sarallagani.com)",
       type: symbolItem.type,
       timezone: "Asia/Kathmandu",
-      intraday_multipliers: ["1", "5", "15", "30", '60', '120', '180', '240'],
+      intraday_multipliers: ["1", "5", "15", "30", "60", "120", "180", "240"],
       exchange: symbolItem.exchange,
       minmov: 1,
       // has_daily: true,
@@ -276,14 +299,11 @@ export default {
       volume_precision: 2,
       data_status: "streaming",
       send_type: symbolItem.send_type,
-
-
     };
 
     // console.log('[resolveSymbol]: Symbol resolved', symbolName);
     onSymbolResolvedCallback(symbolInfo);
   },
-
 
   getBars: async (
     symbolInfo,
@@ -293,7 +313,7 @@ export default {
     onErrorCallback
   ) => {
     const { firstDataRequest } = periodParams;
-    const defaultTimetamp = 1371100000
+    const defaultTimetamp = 1371100000;
     const parsedSymbol = parseFullSymbol(symbolInfo.full_name);
 
     if (firstDataRequest) {
@@ -301,60 +321,65 @@ export default {
         const type = getType(symbolInfo.full_name);
 
         let data;
-        if (resolution.includes('D') || resolution.includes('W') ||
-          resolution.includes('M') || resolution.includes('Y')) {
+        if (
+          resolution.includes("D") ||
+          resolution.includes("W") ||
+          resolution.includes("M") ||
+          resolution.includes("Y")
+        ) {
           if (symbolInfo.type === "Sector") {
-            data = await makeSaralApiRequest(`/sector/chart_data/${type}/1374192000`);
-          }
-          else {
+            data = await makeSaralApiRequest(
+              `/sector/chart_data/${type}/1374192000`
+            );
+          } else {
             if (!isNaN(symbolInfo.send_type)) {
               if (isAdjustedMode) {
                 data = await makeSaralApiRequest(
-                  `/company/chart_data/${symbolInfo.send_type}/${defaultTimetamp}`);
+                  `/company/chart_data/${symbolInfo.send_type}/${defaultTimetamp}`
+                );
               } else {
-                if (symbolInfo.type === 'Stock') {
+                if (symbolInfo.type === "Stock") {
                   data = await makeSaralApiRequest(
-                    `/company/get_company_graph_range/${symbolInfo.send_type}/${defaultTimetamp}`);
+                    `/company/get_company_graph_range/${symbolInfo.send_type}/${defaultTimetamp}`
+                  );
                 } else {
                   data = await makeSaralApiRequest(
-                    `/company/chart_data/${symbolInfo.send_type}/${defaultTimetamp}`);
+                    `/company/chart_data/${symbolInfo.send_type}/${defaultTimetamp}`
+                  );
                 }
               }
-            }
-            else {
+            } else {
               if (isAdjustedMode) {
                 data = await makeSaralApiRequest(
-                  `/company/chart_data_adjusted/${symbolInfo.send_type}`);
+                  `/company/chart_data_adjusted/${symbolInfo.send_type}`
+                );
               } else {
                 data = await makeSaralApiRequest(
-                  `/company/get_company_graph_range/${symbolInfo.send_type}/${defaultTimetamp}`);
-
+                  `/company/get_company_graph_range/${symbolInfo.send_type}/${defaultTimetamp}`
+                );
               }
-
             }
           }
-
-        }
-        else {
-          if (symbolInfo.type === 'Stock') {
+        } else {
+          if (symbolInfo.type === "Stock") {
             data = await makeSaralApiRequest(
-              `/company/chart_data_resolution/${symbolInfo.name}`);
+              `/company/chart_data_resolution/${symbolInfo.name}`
+            );
           } else {
             if (symbolInfo.type == "Indices") {
               data = await makeSaralApiRequest(
-                `/sector/market_chart_data_minute/${symbolInfo.send_type}/${defaultTimetamp}`);
+                `/sector/market_chart_data_minute/${symbolInfo.send_type}/${defaultTimetamp}`
+              );
             } else if (symbolInfo.type == "Sector") {
               data = await makeSaralApiRequest(
-                `/sector/sector_chart_data_minute/${type}/${defaultTimetamp}`);
+                `/sector/sector_chart_data_minute/${type}/${defaultTimetamp}`
+              );
             } else {
               data = await makeSaralApiRequest(
-                `/company/chart_data/${symbolInfo.send_type}/${defaultTimetamp}`);
-
-
+                `/company/chart_data/${symbolInfo.send_type}/${defaultTimetamp}`
+              );
             }
-
           }
-
         }
         if (data.status != 200 || data.data.length === 0) {
           // "noData" should be set if there is no data in the requested period
@@ -369,15 +394,31 @@ export default {
           // if (bar.t >= from && bar.t < to) {
           //Interchanged close and open, data coming wrong on intraday side
           if (Number(resolution)) {
-            if ((index + 1) !== arr.length) {
+            if (index + 1 !== arr.length) {
               bars = [
                 ...bars,
                 {
-                  time: Number(resolution) ? bar.t * 1000 + 24 * 60 * 60 * 1000 : bar.t * 1000 + 24 * 60 * 60 * 1000,
+                  time: Number(resolution)
+                    ? bar.t * 1000 + 24 * 60 * 60 * 1000
+                    : bar.t * 1000 + 24 * 60 * 60 * 1000,
                   open: Number(resolution) ? bar.c : bar.o,
-                  close: Number(resolution) ? ((index == (arr.length - 1)) ? bar.o : arr[index + 1].c) : bar.c,
-                  low: Number(resolution) ? (Math.min(((index == (arr.length - 1)) ? bar.o : arr[index + 1].c), bar.c)) : bar.l,
-                  high: Number(resolution) ? (Math.max(((index == (arr.length - 1)) ? bar.o : arr[index + 1].c), bar.c)) : bar.h,
+                  close: Number(resolution)
+                    ? index == arr.length - 1
+                      ? bar.o
+                      : arr[index + 1].c
+                    : bar.c,
+                  low: Number(resolution)
+                    ? Math.min(
+                        index == arr.length - 1 ? bar.o : arr[index + 1].c,
+                        bar.c
+                      )
+                    : bar.l,
+                  high: Number(resolution)
+                    ? Math.max(
+                        index == arr.length - 1 ? bar.o : arr[index + 1].c,
+                        bar.c
+                      )
+                    : bar.h,
                   volume: Number(resolution) ? 0 : bar.v,
                 },
               ];
@@ -386,11 +427,27 @@ export default {
             bars = [
               ...bars,
               {
-                time: Number(resolution) ? bar.t * 1000 + 24 * 60 * 60 * 1000 : bar.t * 1000 + 24 * 60 * 60 * 1000,
+                time: Number(resolution)
+                  ? bar.t * 1000 + 24 * 60 * 60 * 1000
+                  : bar.t * 1000 + 24 * 60 * 60 * 1000,
                 open: Number(resolution) ? bar.c : bar.o,
-                close: Number(resolution) ? ((index == (arr.length - 1)) ? bar.o : arr[index + 1].c) : bar.c,
-                low: Number(resolution) ? (Math.min(((index == (arr.length - 1)) ? bar.o : arr[index + 1].c), bar.c)) : bar.l,
-                high: Number(resolution) ? (Math.max(((index == (arr.length - 1)) ? bar.o : arr[index + 1].c), bar.c)) : bar.h,
+                close: Number(resolution)
+                  ? index == arr.length - 1
+                    ? bar.o
+                    : arr[index + 1].c
+                  : bar.c,
+                low: Number(resolution)
+                  ? Math.min(
+                      index == arr.length - 1 ? bar.o : arr[index + 1].c,
+                      bar.c
+                    )
+                  : bar.l,
+                high: Number(resolution)
+                  ? Math.max(
+                      index == arr.length - 1 ? bar.o : arr[index + 1].c,
+                      bar.c
+                    )
+                  : bar.h,
                 volume: Number(resolution) ? 0 : bar.v,
               },
             ];
@@ -410,8 +467,102 @@ export default {
     }
   },
 
-  subscribeBars: (symbolInfo, resolution, onRealtimeCallback, subscriberUID, onResetCacheNeededCallback) => {
-    console.log('[subscribeBars]: Method call with subscriberUID:', symbolInfo, resolution, subscriberUID);
+  bar_replay_start: () => {
+    if (BAR_REPLAY.FUTURE_DATA.length === 0) {
+      console.error("No future data available for replay.");
+      return;
+    }
+
+    BAR_REPLAY.ON = true;
+    BAR_REPLAY.STATUS = "start";
+
+    const playNextCandle = () => {
+      if (!BAR_REPLAY.ON) return; // Check if replay is still on
+
+      const candle = BAR_REPLAY.FUTURE_DATA.shift();
+
+      if (candle) {
+        // Ensure the callback is properly invoked with candle data
+        if (SUBSCRIPTIONS.has("callback")) {
+          SUBSCRIPTIONS.get("callback")({
+            time: candle.time * 1000, // Ensure time is in milliseconds
+            open: candle.open,
+            high: candle.high,
+            low: candle.low,
+            close: candle.close,
+          });
+        } else {
+          console.error("Callback not found in subscriptions.");
+        }
+
+        // Schedule the next candle
+        BAR_REPLAY.INTERVAL = setTimeout(playNextCandle, BAR_REPLAY.SPEED);
+      } else {
+        BAR_REPLAY.ON = false; // Stop replay if no more candles
+        console.log("Replay finished.");
+      }
+    };
+
+    playNextCandle(); // Start playing the first candle
+  },
+
+  bar_replay_stop: () => {
+    BAR_REPLAY.STATUS = "stop";
+    BAR_REPLAY.ON = false;
+    clearTimeout(BAR_REPLAY.INTERVAL); // Clear the timeout
+    console.log("Replay stopped.");
+  },
+
+  bar_replay_step: () => {
+    clearTimeout(BAR_REPLAY.INTERVAL); // Stop any running timeout
+
+    if (!BAR_REPLAY.FUTURE_DATA.length) {
+      console.log("No more candles to step through.");
+      return;
+    }
+
+    const candle = BAR_REPLAY.FUTURE_DATA.shift(); // Get the next candle
+
+    if (candle) {
+      if (SUBSCRIPTIONS.has("callback")) {
+        SUBSCRIPTIONS.get("callback")({
+          time: candle.time * 1000, // Ensure time is in milliseconds
+          open: candle.open,
+          high: candle.high,
+          low: candle.low,
+          close: candle.close,
+        });
+      } else {
+        console.error("Callback not found in subscriptions.");
+      }
+    }
+  },
+
+  bar_replay_set_speed: (speed) => {
+    BAR_REPLAY.SPEED = speed; // Update the speed
+    console.log(`Replay speed set to: ${speed}`);
+
+    if (BAR_REPLAY.ON) {
+      clearTimeout(BAR_REPLAY.INTERVAL);
+      if (BAR_REPLAY.STATUS === "start") {
+        bar_replay_start(); // Restart the replay to apply the new speed
+      }
+    }
+  },
+
+  subscribeBars: (
+    symbolInfo,
+    resolution,
+    onRealtimeCallback,
+    subscriberUID,
+    onResetCacheNeededCallback
+  ) => {
+    console.log(
+      "[subscribeBars]: Method call with subscriberUID:",
+      symbolInfo,
+      resolution,
+      subscriberUID
+    );
   },
   unsubscribeBars: (subscriberUID) => {
     // console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID);

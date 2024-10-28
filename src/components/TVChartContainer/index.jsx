@@ -430,6 +430,69 @@ export const TVChartContainer = ({ symbol, height, setSymbol }) => {
       // tvWidget.activeChart().createStudy("Relative Strength Index");
 
       tvWidget.headerReady().then(() => {
+        let bar_replay_status = 0;
+        const bar_replay = tvWidget.createButton();
+
+        bar_replay.setAttribute("title", "Bar replay");
+
+        bar_replay.addEventListener("click", () => {
+          if (bar_replay_status == 0) {
+            bar_replay.innerHTML =
+              '<div data-role="button" class="button-reABrhVR" style="padding:4px"; display: inline-flex; align-items: center;"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"> <path fill="none" stroke="blue" d="M13.5 20V9l-6 5.5 6 5.5zM21.5 20V9l-6 5.5 6 5.5z"></path> </svg> <span style="color: blue">Replay</span> </div>';
+            tvWidget
+              .activeChart()
+              .requestSelectBar()
+              .then((time) => {
+                localStorage.setItem("bar_replay", time);
+                window.location.reload();
+              });
+          } else {
+            bar_replay.innerHTML =
+              '<div data-role="button" class="button-reABrhVR" style="padding:4px"; display: inline-flex; align-items: center;"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"> <path fill="none" stroke="currentColor" d="M13.5 20V9l-6 5.5 6 5.5zM21.5 20V9l-6 5.5 6 5.5z"></path> </svg> <span>Replay</span> </div>';
+            tvWidget.activeChart().cancelSelectBar();
+          }
+
+          bar_replay_status = bar_replay_status == 0 ? 1 : 0;
+        });
+
+        bar_replay.innerHTML =
+          '<div data-role="button" class="button-reABrhVR" style="padding:4px"; display: inline-flex; align-items: center;"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"> <path fill="none" stroke="currentColor" d="M13.5 20V9l-6 5.5 6 5.5zM21.5 20V9l-6 5.5 6 5.5z"></path> </svg> <span>Replay</span> </div>';
+
+        // PLAY
+
+        let bar_replay_controls_status = 0;
+        let bar_replay_controls = tvWidget.createButton();
+        bar_replay_controls.setAttribute("title", "Play");
+
+        bar_replay_controls.addEventListener("click", () => {
+          if (bar_replay_controls_status == 0) {
+            Datafeed.bar_replay_start();
+            bar_replay_controls.innerHTML =
+              '<div data-role="button" class="button-reABrhVR" style="padding:4px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="currentColor" fill-rule="evenodd" d="M10 6h2v16h-2V6ZM9 6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V6Zm7 0h2v16h-2V6Zm-1 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V6Z"></path></svg></div>';
+          } else {
+            Datafeed.bar_replay_stop();
+            bar_replay_controls.innerHTML =
+              '<div data-role="button" class="button-reABrhVR" style="padding:4px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="currentColor" fill-rule="evenodd" d="m10.997 6.93 7.834 6.628a.58.58 0 0 1 0 .88l-7.834 6.627c-.359.303-.897.04-.897-.44V7.37c0-.48.538-.743.897-.44Zm8.53 5.749a1.741 1.741 0 0 1 0 2.637l-7.834 6.628c-1.076.91-2.692.119-2.692-1.319V7.37c0-1.438 1.616-2.23 2.692-1.319l7.834 6.628Z"></path></svg></div>';
+          }
+
+          bar_replay_controls_status = bar_replay_controls_status == 0 ? 1 : 0;
+        });
+
+        bar_replay_controls.innerHTML =
+          '<div data-role="button" class="button-reABrhVR" style="padding:4px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="currentColor" fill-rule="evenodd" d="m10.997 6.93 7.834 6.628a.58.58 0 0 1 0 .88l-7.834 6.627c-.359.303-.897.04-.897-.44V7.37c0-.48.538-.743.897-.44Zm8.53 5.749a1.741 1.741 0 0 1 0 2.637l-7.834 6.628c-1.076.91-2.692.119-2.692-1.319V7.37c0-1.438 1.616-2.23 2.692-1.319l7.834 6.628Z"></path></svg></div>';
+
+        // FORWARD (STEP)
+
+        var bar_replay_step = tvWidget.createButton();
+        bar_replay_step.setAttribute("title", "Forward");
+
+        bar_replay_step.addEventListener("click", () => {
+          Datafeed.bar_replay_step();
+        });
+
+        bar_replay_step.innerHTML =
+          '<div data-role="button" class="button-reABrhVR" style="padding:4px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="currentColor" fill-rule="evenodd" d="M20 6v16h1V6h-1Zm-3.908 7.628L9.834 7.996A.5.5 0 0 0 9 8.368v11.264a.5.5 0 0 0 .834.372l6.258-5.632a.5.5 0 0 0 0-.744Zm.67 1.487a1.5 1.5 0 0 0 0-2.23l-6.259-5.632C9.538 6.384 8 7.07 8 8.368v11.264c0 1.299 1.538 1.984 2.503 1.115l6.258-5.632Z"></path></svg></div>';
+
         const button = tvWidget.createButton();
         const adjustedButton = tvWidget.createButton();
         button.setAttribute("title", "Click to show a notification popup");
