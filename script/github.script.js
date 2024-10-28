@@ -6,7 +6,7 @@ const deploy = async () => {
   const sourceRepo = path.resolve(process.cwd(), ".."); // Path to the source repository
   const targetRepo = "/Users/bipingiri/personal/test"; // Path to the target repository
   const commitMessage = "Automated commit with folder copy"; // Commit message
-
+  console.log("object");
   if (!fs.existsSync(targetRepo)) {
     fs.mkdirSync(targetRepo, { recursive: true });
   }
